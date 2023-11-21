@@ -16,4 +16,5 @@ class AuthController extends Controller
         event(new SmsVerificationCode($phone_number, $verification_code));
         return response()->json(['message' => 'Verification code send successfully']);
     }
+
 }
