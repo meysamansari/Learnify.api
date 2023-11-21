@@ -44,7 +44,7 @@ class AuthController extends Controller
                     $type = 'admin';
                 }
                 else if (!$userRole) {
-                    $user = User::Create([
+                    $userRole = User::Create([
                         'name' => $user->name,
                         'family' => $user->family,
                         'email' => $user->middle_name,
@@ -57,7 +57,7 @@ class AuthController extends Controller
                         'country' => $user->country,
                         'state' => $user->state,
                     ]);
-                    $user->assignRole($type);
+                    $userRole->assignRole($type);
                 }
             } else {
                 $userRole = User::Create([
