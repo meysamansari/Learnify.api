@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('verifications', function (Blueprint $table) {
             $table->id();
+            $table->string('phone_number');
+            $table->string('verification_code')->nullable();
+            $table->timestamp('verification_valid_until')->nullable();
             $table->timestamps();
         });
     }
