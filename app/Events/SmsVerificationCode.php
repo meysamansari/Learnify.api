@@ -13,13 +13,15 @@ use Illuminate\Queue\SerializesModels;
 class SmsVerificationCode
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+    public $phone_number;
+    public $verification_code;
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct($phone_number,$verification_code)
     {
-        //
+        $this->phone_number= $phone_number;
+        $this->verification_code= $verification_code;
     }
 
     /**
