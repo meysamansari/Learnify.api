@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::group([], function () {
     Route::post('verification-code-request', [AuthController::class, 'sendVerificationCode']);
     Route::post('login/{type}', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
