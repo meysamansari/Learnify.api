@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,8 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::group([], function () {
+    Route::post('verification-code-request', [AuthController::class, 'sendVerificationCode']);
+    Route::post('login/{type}', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
 });
-Route::post('verification-code-request', [\App\Http\Controllers\AuthController::class, 'sendVerificationCode']);
-Route::post('login/{type}', [\App\Http\Controllers\AuthController::class, 'login']);
