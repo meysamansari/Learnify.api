@@ -7,9 +7,14 @@ use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use App\Models\Verification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum', ['except' => ['sendVerificationCode','login']]);
+    }
     public function sendVerificationCode(Request $request)
     {
         $phone_number = $request->input('phone_number');
@@ -73,5 +78,12 @@ class AuthController extends Controller
                 'token' => $token]);
         }
         return response()->json(['status' => 401, 'message' => 'verification code is wrong']);
+    }
+    public function logout()
+    {
+        Auth::user()->tokens()->delete();
+        return response()->json([
+            'message' => 'User logged out successfully',
+        ]);
     }
 }
