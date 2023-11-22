@@ -3,9 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\SmsVerificationCode;
-use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use IPPanel\Client;
 
 class SendSmsVerification
 {
@@ -22,18 +22,9 @@ class SendSmsVerification
      */
     public function handle(SmsVerificationCode $event): void
     {
-        $url = "http://ippanel.com:8080/";
-        $data = array(
-            "apikey" => "lKV7mXyFy99HZ16vlZ5_X0UgQtSkSY6vE_6sd7YTtYQ=",
-            "pid" => "giangz952u69pm7",
-            "fnum" => "09810004223",
-            "tnum" => "$event->phone_number",
-            "p1" => "verification-code",
-            "v1" => "$event->verification_code",
-        );
-        $client = new Client();
-        $client->request('GET', $url, [
-            'query' => $data
+        $client = new Client("lKV7mXyFy99HZ16vlZ5_X0UgQtSkSY6vE_6sd7YTtYQ=");
+        $client->sendPattern("giangz952u69pm7","+9890000145","$event->phone_number",[
+            "verification-code" => "$event->verification_code",
         ]);
     }
 }
