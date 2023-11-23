@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NoteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,5 @@ Route::group([], function () {
     Route::post('login/{type}', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
 });
+
+Route::post('note',[NoteController::class, 'store']);
