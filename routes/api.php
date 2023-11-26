@@ -15,12 +15,26 @@ use App\Http\Controllers\NoteController;
 |
 */
 
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
-Route::group([], function () {
+
+
+// Auth
+
+Route::group(['prefix' => 'auth'], function () {
     Route::post('verification-code-request', [AuthController::class, 'sendVerificationCode']);
     Route::post('login/{type}', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
 });
 
-Route::post('note/{course_id}',[NoteController::class, 'store']);
-Route::get('note/{id}', [NoteController::class, 'show']);
+
+
+// Note
+
+Route::group(['prefix' => 'notes', 'middleware' => 'auth:sanctum'], function () {
+    Route::post('/{course_id}',[NoteController::class, 'UpdateOrCreate']);
+    Route::get('/{id}', [NoteController::class, 'show']);
+
+});
