@@ -19,4 +19,12 @@ class NoteController extends Controller
 
         ]));
     }
+    public function show($id)
+    {
+        $note = Note::find($id);
+        return response()->json(
+            $note
+        );
+    }
 }
+
