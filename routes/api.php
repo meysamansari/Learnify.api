@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NoteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +15,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
-Route::group([], function () {
+
+
+// Auth
+
+Route::group(['prefix' => 'auth'], function () {
     Route::post('verification-code-request', [AuthController::class, 'sendVerificationCode']);
     Route::post('login/{type}', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
+});
+
+
+
+// Note
+
+Route::group(['prefix' => 'notes', 'middleware' => 'auth:sanctum'], function () {
+    Route::post('/{course_id}',[NoteController::class, 'UpdateOrCreate']);
+    Route::get('/{id}', [NoteController::class, 'show']);
+    Route::delete('/{id}', [NoteController::class, 'delete']);
 });
