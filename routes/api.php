@@ -22,4 +22,5 @@ Route::group([], function () {
     Route::post('logout', [AuthController::class, 'logout']);
 });
 
-Route::post('note',[NoteController::class, 'store']);
+Route::post('note/{course_id}',[NoteController::class, 'store']);
+Route::get('note/{id}', [NoteController::class, 'show']);
