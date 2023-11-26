@@ -36,5 +36,5 @@ Route::group(['prefix' => 'auth'], function () {
 Route::group(['prefix' => 'notes', 'middleware' => 'auth:sanctum'], function () {
     Route::post('/{course_id}',[NoteController::class, 'UpdateOrCreate']);
     Route::get('/{id}', [NoteController::class, 'show']);
-
+    Route::delete('/{id}', [NoteController::class, 'delete']);
 });
