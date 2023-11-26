@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class NoteController extends Controller
 {
 
+
     public function UpdateOrCreate(Request $request, $course_id)
     {
         $user = Auth::user();
@@ -36,4 +37,16 @@ class NoteController extends Controller
         $note = Note::find($id);
         return response()->json(['data' => $note]);
     }
+
+
+    public function delete($id)
+    {
+        if (Note::where('id', $id)->exists()) {
+            Note::destroy($id);
+            return response()->json(['message' => 'successfully deleted note', 'data' => [$id]]);
+        } else {
+            return response()->json(['message' => 'note not found']);
+        }
+    }
+
 }
