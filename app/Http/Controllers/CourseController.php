@@ -53,4 +53,9 @@ class CourseController extends Controller
             return response()->json(['message' => 'course successfully updated', 'data' => $course]);
         }
     }
+    public function index($id)
+    {
+        $course = Course::find($id)->with('chapters.lessons')->first();
+        return response()->json(['course' => $course]);
+    }
 }
