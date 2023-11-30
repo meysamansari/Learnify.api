@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
+            $table->integer('chapter_id')->nullable();
+            $table->string('title')->nullable();
+            $table->integer('time')->nullable();
+            $table->string('visibility')->nullable();
+            $table->integer('video_id')->nullable();
             $table->timestamps();
         });
     }
