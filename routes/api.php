@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
@@ -46,4 +47,14 @@ Route::group(['prefix' => 'notes', 'middleware' => 'auth:sanctum'], function () 
     Route::post('/{course_id}',[NoteController::class, 'UpdateOrCreate']);
     Route::get('/{id}', [NoteController::class, 'show']);
     Route::delete('/{id}', [NoteController::class, 'delete']);
+});
+
+
+
+// Course
+
+Route::group(['prefix' => 'course', 'middleware' => 'auth:sanctum'], function () {
+    Route::post('/create', [CourseController::class, 'create']);
+    Route::get('/{id}', [CourseController::class, 'index']);
+    Route::put('/update/{course_id}/{step?}', [CourseController::class, 'update'])->whereIn('step',[0,1,2,3,4]);
 });
