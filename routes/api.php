@@ -31,6 +31,14 @@ Route::group(['prefix' => 'auth'], function () {
 
 
 
+// User
+
+Route::group(['prefix' => 'user', 'middleware' => 'auth:sanctum'], function () {
+    Route::put('/update', [UserController::class, 'update']);
+});
+
+
+
 // Note
 
 Route::group(['prefix' => 'notes', 'middleware' => 'auth:sanctum'], function () {
