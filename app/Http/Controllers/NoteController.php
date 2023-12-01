@@ -3,12 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Note;
-use http\Env\Response;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NoteController extends Controller
 {
+
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
 
     public function UpdateOrCreate(Request $request, $course_id)
@@ -34,19 +40,23 @@ class NoteController extends Controller
 
     public function show($id)
     {
-        $note = Note::find($id);
-        return response()->json(['data' => $note]);
-    }
-
-
-    public function delete($id)
-    {
-        if (Note::where('id', $id)->exists()) {
-            Note::destroy($id);
-            return response()->json(['message' => 'successfully deleted note', 'data' => [$id]]);
-        } else {
-            return response()->json(['message' => 'note not found']);
+        try {
+            $note = Note::findOrFail($id);
+            return response()->json(['data' => $note]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'note not found'], 404);
         }
     }
 
+
+    public function destroy($id)
+    {
+        try {
+            $note = Note::findOrFail($id);
+            $note->delete();
+            return response()->json(['message' => 'successfully deleted note']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'note not found'], 404);
+        }
+    }
 }
