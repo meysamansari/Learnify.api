@@ -5,7 +5,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
-
+use App\Http\Controllers\BlogController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,7 +20,6 @@ use App\Http\Controllers\NoteController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
 
 
 // Auth
@@ -41,12 +40,24 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth:sanctum'], function () {
 
 
 
+
 // Note
 
 Route::group(['prefix' => 'notes', 'middleware' => 'auth:sanctum'], function () {
-    Route::post('/{course_id}',[NoteController::class, 'UpdateOrCreate']);
+    Route::post('/{course_id}',[NoteController::class, 'UpdateOrCreate'])->whereNumber('course_id');
     Route::get('/{id}', [NoteController::class, 'show']);
-    Route::delete('/{id}', [NoteController::class, 'delete']);
+    Route::delete('/{id}', [NoteController::class, 'destroy']);
+});
+
+
+// Blog
+
+Route::group(['prefix' => 'blogs','middleware'=>'auth:sanctum'], function (){
+    Route::get('/',[BlogController::class, 'index']);
+    Route::post('/',[BlogController::class, 'store']);
+    Route::get('/{id}',[BlogController::class, 'show']);
+    Route::put('/{id}',[BlogController::class, 'update']);
+    Route::delete('/{id}',[BlogController::class, 'destroy']);
 });
 
 
