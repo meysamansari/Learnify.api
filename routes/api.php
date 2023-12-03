@@ -39,11 +39,15 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth:sanctum'], function () {
     Route::put('/update', [UserController::class, 'update']);
 });
 
+
+
 // Media
 
 Route::group(['prefix' => 'media', 'middleware' => 'auth:sanctum'], function () {
     Route::post('/video', [MediaController::class, 'uploadVideo']);
+    Route::post('/image', [MediaController::class, 'uploadImage']);
 });
+
 
 
 // Note
@@ -53,6 +57,7 @@ Route::group(['prefix' => 'notes', 'middleware' => 'auth:sanctum'], function () 
     Route::get('/{id}', [NoteController::class, 'show']);
     Route::delete('/{id}', [NoteController::class, 'destroy']);
 });
+
 
 
 // Blog
