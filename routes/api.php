@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\BlogController;
@@ -29,6 +31,15 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 
+
+// User
+
+Route::group(['prefix' => 'user', 'middleware' => 'auth:sanctum'], function () {
+    Route::put('/update', [UserController::class, 'update']);
+});
+
+
+
 // Note
 
 Route::group(['prefix' => 'notes', 'middleware' => 'auth:sanctum'], function () {
@@ -46,4 +57,14 @@ Route::group(['prefix' => 'blogs','middleware'=>'auth:sanctum'], function (){
     Route::get('/{id}',[BlogController::class, 'show']);
     Route::put('/{id}',[BlogController::class, 'update']);
     Route::delete('/{id}',[BlogController::class, 'destroy']);
+});
+
+
+
+// Course
+
+Route::group(['prefix' => 'course', 'middleware' => 'auth:sanctum'], function () {
+    Route::post('/create', [CourseController::class, 'create']);
+    Route::get('/{id}', [CourseController::class, 'index']);
+    Route::put('/update/{course_id}/{step?}', [CourseController::class, 'update'])->whereIn('step',[0,1,2,3,4]);
 });
