@@ -69,7 +69,7 @@ class AuthController extends Controller
                     'phone_number' => $phone_number]);
                 $userRole->assignRole($type);
             }
-            $token = $user->createToken('api_token')->plainTextToken;
+            $token = $userRole->createToken('api_token')->plainTextToken;
             $verification->verification_code = null;
             $verification->verification_valid_until = null;
             $verification->save();
