@@ -22,7 +22,7 @@ class MediaController extends Controller
     public function uploadImage(Request $request)
     {
         $request->validate([
-            'video' => 'required|file|mimes:png,jpeg',
+            'image' => 'required|file|mimes:png,jpeg',
         ]);
         $image = new Image();
         $image->addMedia($request->file('image'))->toMediaCollection('images');
