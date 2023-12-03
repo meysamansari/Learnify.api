@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
@@ -38,7 +39,11 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth:sanctum'], function () {
     Route::put('/update', [UserController::class, 'update']);
 });
 
+// Media
 
+Route::group(['prefix' => 'media', 'middleware' => 'auth:sanctum'], function () {
+    Route::post('/video', [MediaController::class, 'uploadVideo']);
+});
 
 
 // Note
