@@ -11,8 +11,13 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-
         $phoneNumber = $user->phone_number;
+        if($user->hasRole('mentor')){
+//            dd($user);
+        }
+        if($user->hasRole('student')){
+//            dd($user);
+        }
 
         $data = $request->except('_token', 'phone_number');
         $update_user = User::where('phone_number', $phoneNumber)->get();
