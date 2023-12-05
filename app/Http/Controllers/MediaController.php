@@ -12,10 +12,10 @@ class MediaController extends Controller
     public function uploadVideo(Request $request)
     {
         $request->validate([
-            'video' => 'required|file|mimes:mp4,mov,avi|max:20000',
+            'video' => 'required|file|mimes:mp4,mov,avi|max:200000',
         ]);
         $video = new Video();
-        $video->addMedia($request->file('video'))->toMediaCollection('videos');
+        $video->addMediaFromRequest('video')->toMediaCollection('videos');
         $video->save();
         return response()->json($video);
     }
@@ -25,7 +25,7 @@ class MediaController extends Controller
             'image' => 'required|file|mimes:png,jpeg',
         ]);
         $image = new Image();
-        $image->addMedia($request->file('image'))->toMediaCollection('images');
+        $image->addMediaFromRequest('image')->toMediaCollection('images');
         $image->save();
         return response()->json($image);
     }

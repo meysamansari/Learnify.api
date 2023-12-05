@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Chapter;
 use App\Models\Course;
+use App\Models\Image;
 use App\Models\Lesson;
+use App\Models\User;
+use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,9 +56,45 @@ class CourseController extends Controller
             return response()->json(['message' => 'course successfully updated', 'data' => $course]);
         }
     }
-    public function index($id)
+
+    public function show($id)
     {
         $course = Course::find($id)->with('chapters.lessons')->first();
-        return response()->json(['course' => $course]);
+        $mentor = User::find($course->user_id)->first();
+        $image_id = $course->image_id;
+        $teaser_id = $course->teaser_id;
+        $courseImage=[];
+        $courseVideo=[];
+        if ($image_id) {
+            $image = Image::find($image_id)->first();
+            $courseImage = $image->getMedia('*');
+        }
+        if ($teaser_id) {
+            $video = Video::find($teaser_id)->first();
+            $courseVideo = $video->getMedia('*');
+        }
+
+        $lessonMedia = [];
+        foreach ($course['chapters'] as $chapterData) {
+            foreach ($chapterData['lessons'] as $lessonData) {
+                $video_id = $lessonData['video_id'];
+                if ($video_id) {
+                    $video = Video::find($video_id)->first();
+                    $media = $video->getMedia('*');
+                    $lessonMedia = [
+                        'lesson_id' => $lessonData->id,
+                        'media' => $media,
+                        'visibility' => $lessonData->visibility,
+                    ];
+                }
+            }
+        }
+        $Data = [
+            'mentor' => $mentor,
+            'Course_image' => $courseImage,
+            'Course_teaser' => $courseVideo,
+            'Lesson_media' => $lessonMedia,
+        ];
+        return response()->json(['course' => $course, 'data' => $Data]);
     }
 }
