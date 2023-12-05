@@ -76,6 +76,6 @@ Route::group(['prefix' => 'blogs','middleware'=>'auth:sanctum'], function (){
 
 Route::group(['prefix' => 'course', 'middleware' => 'auth:sanctum'], function () {
     Route::post('/create', [CourseController::class, 'create']);
-    Route::get('/{id}', [CourseController::class, 'index']);
+    Route::get('/{id}', [CourseController::class, 'show']);
     Route::put('/update/{course_id}/{step?}', [CourseController::class, 'update'])->whereIn('step',[0,1,2,3,4]);
 });
