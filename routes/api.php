@@ -37,6 +37,7 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::group(['prefix' => 'user', 'middleware' => 'auth:sanctum'], function () {
     Route::put('/update', [UserController::class, 'update']);
+    Route::get('/show', [UserController::class, 'show']);
 });
 
 
