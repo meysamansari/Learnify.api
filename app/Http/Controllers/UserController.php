@@ -33,13 +33,19 @@ class UserController extends Controller
                 }
         }
             }
-        $data = $request->except('_token', 'phone_number');
+        $request = $request->except('_token', 'phone_number','email');
         $update_user = User::where('phone_number', $phoneNumber)->get();
         if ($update_user->isNotEmpty()) {
             foreach ($update_user as $user) {
-                $user->update($data);
+                $user->update($request);
+                if($user->hasRole('student')){
+                    $data = $user->load('favorites');
+                }
+                if($user->hasRole('mentor')){
+                    $data = $user->load('resume');
+                }
             }
-            return response()->json(['message' => 'user information successfully updated', 'data' => $update_user]);
+            return response()->json(['message' => 'user information successfully updated', 'user' => $data]);
         }
         return response()->json(['message' => 'user not found'], 404);
     }
@@ -49,10 +55,10 @@ class UserController extends Controller
 
         if ($user->hasRole('mentor')) {
             $data = $user->load('resume');
-            return response()->json(['message' => 'ok', 'data' => $data]);
+            return response()->json(['message' => 'Mentor retrieved successfully', 'data' => $data]);
         } else if ($user->hasRole('student')) {
             $data = $user->load('favorites');
-            return response()->json(['message' => 'ok', 'data' => $data]);
+            return response()->json(['message' => 'Student retrieved successfully', 'data' => $data]);
         }
     }
 }

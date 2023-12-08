@@ -66,9 +66,9 @@ class CourseController extends Controller
         }
     }
 
-    public function show($id)
+    public function show($course_id)
     {
-        $course = Course::with('chapters.lessons')->findOrFail($id);
+        $course = Course::with('chapters.lessons')->findOrFail($course_id);
         $mentor = User::findOrFail($course->user_id);
         $resume=[];
         if ($mentor->resume&&!is_null($mentor->resume->description))
