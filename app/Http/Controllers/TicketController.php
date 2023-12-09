@@ -15,13 +15,11 @@ class TicketController extends Controller
 {
 
 
-
     public function index()
     {
         $comments = Ticket::latest('updated_at')->paginate(10);
         return response()->json(['data' => $comments]);
     }
-
 
 
     public function store(StoreTicketRequest $request, $course_id)
@@ -38,7 +36,6 @@ class TicketController extends Controller
     }
 
 
-
     public function show($ticket_id)
     {
         try {
@@ -48,7 +45,6 @@ class TicketController extends Controller
             return response()->json(['error' => 'Ticket not found'], 404);
         }
     }
-
 
 
     public function update(Request $request, $id)
@@ -69,7 +65,6 @@ class TicketController extends Controller
     }
 
 
-
     public function reply(ReplyTicketRequest $request, $ticket_id)
     {
         try {
@@ -80,6 +75,18 @@ class TicketController extends Controller
             return response()->json(['message' => 'Reply added successfully', 'data' => $reply]);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Reply not found'], 404);
+        }
+    }
+
+
+    public function destroy($id)
+    {
+        try {
+            $comment = Ticket::findOrFail($id);
+            $comment->delete();
+            return response()->json(['message' => 'Ticket deleted successfully']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Ticket not found'], 404);
         }
     }
 }
