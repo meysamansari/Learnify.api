@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
+            $table->text('message');
+            $table->longText('reply')->nullable();
+            $table->unsignedBigInteger('course_id');
+            $table->unsignedBigInteger('user_id');
+            $table->integer('rate')->nullable();
             $table->timestamps();
         });
     }
