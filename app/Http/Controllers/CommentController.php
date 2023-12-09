@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ReplyCommentRequest;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comment;
 use App\Models\Course;
@@ -71,4 +72,17 @@ class CommentController extends Controller
     }
 
 
+
+    public function reply(ReplyCommentRequest $request, $comment_id)
+    {
+        try {
+            $reply = Comment::findOrFail($comment_id);
+            $reply->update([
+                'reply' => $request->reply,
+            ]);
+            return response()->json(['message' => 'Reply added successfully', 'data' => $reply]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Comment not found'], 404);
+        }
+    }
 }
