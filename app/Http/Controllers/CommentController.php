@@ -85,4 +85,17 @@ class CommentController extends Controller
             return response()->json(['error' => 'Comment not found'], 404);
         }
     }
+
+
+
+    public function destroy($id)
+    {
+        try {
+            $comment = Comment::findOrFail($id);
+            $comment->delete();
+            return response()->json(['message' => 'Comment deleted successfully']);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Comment not found'], 404);
+        }
+    }
 }
