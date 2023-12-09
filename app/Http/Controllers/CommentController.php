@@ -49,4 +49,26 @@ class CommentController extends Controller
             return response()->json(['error' => 'Comment not found'], 404);
         }
     }
+
+
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $comment = Comment::findOrFail($id);
+            if ($comment->reply === null && $comment->rate === null) {
+                $comment->update([
+                    'message' => $request->message,
+                    'rate' => $request->rate,
+                ]);
+                return response()->json(['message' => 'Comment updated successfully']);
+            } else {
+                return response()->json(['error' => 'Cannot update the comment'], 400);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Comment not found'], 404);
+        }
+    }
+
+
 }
