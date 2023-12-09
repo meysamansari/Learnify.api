@@ -86,4 +86,5 @@ Route::group(['prefix' => 'course', 'middleware' => 'auth:sanctum'], function ()
 Route::group(['prefix' => 'comment','middleware'=>'auth:sanctum'], function () {
     Route::get('/',[CommentController::class, 'index']);
     Route::post('/{course_id}', [CommentController::class, 'store']);
+    Route::get('/{comment_id}',[CommentController::class, 'show']);
 });
