@@ -88,4 +88,5 @@ Route::group(['prefix' => 'comment','middleware'=>'auth:sanctum'], function () {
     Route::post('/{course_id}', [CommentController::class, 'store']);
     Route::get('/{comment_id}',[CommentController::class, 'show']);
     Route::put('/{comment_id}',[CommentController::class, 'update']);
+    Route::post('/reply/{course_id}',[CommentController::class, 'reply']);
 });
