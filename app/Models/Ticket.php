@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @method static create(array $array)
  * @method static latest(string $string)
+ * @method static findOrFail($ticket_id)
  */
 class Ticket extends Model
 {
