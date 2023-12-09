@@ -47,4 +47,23 @@ class TicketController extends Controller
             return response()->json(['error' => 'Ticket not found'], 404);
         }
     }
+
+
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $ticket = Ticket::findOrFail($id);
+            if ($ticket->reply === null) {
+                $ticket->update([
+                    'message' => $request->message
+                ]);
+                return response()->json(['message' => 'Ticket updated successfully']);
+            } else {
+                return response()->json(['error' => 'Cannot update the ticket'], 400);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Ticket not found'], 404);
+        }
+    }
 }
