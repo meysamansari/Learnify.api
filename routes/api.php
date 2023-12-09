@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\UserController;
@@ -76,4 +77,12 @@ Route::group(['prefix' => 'course', 'middleware' => 'auth:sanctum'], function ()
     Route::post('/create', [CourseController::class, 'create']);
     Route::get('/show/{course_id}', [CourseController::class, 'show']);
     Route::put('/update/{course_id}/{step?}', [CourseController::class, 'update'])->whereIn('step',[0,1,2,3,4]);
+});
+
+
+
+// Comment
+
+Route::group(['prefix' => 'comment','middleware'=>'auth:sanctum'], function () {
+    Route::post('/{course_id}', [CommentController::class, 'store']);
 });
