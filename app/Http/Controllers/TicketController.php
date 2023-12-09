@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ReplyTicketRequest;
 use App\Http\Requests\StoreTicketRequest;
 use App\Models\Comment;
 use App\Models\Course;
@@ -64,6 +65,21 @@ class TicketController extends Controller
             }
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Ticket not found'], 404);
+        }
+    }
+
+
+
+    public function reply(ReplyTicketRequest $request, $ticket_id)
+    {
+        try {
+            $reply = Ticket::findOrFail($ticket_id);
+            $reply->update([
+                'reply' => $request->reply,
+            ]);
+            return response()->json(['message' => 'Reply added successfully', 'data' => $reply]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Reply not found'], 404);
         }
     }
 }
