@@ -12,6 +12,15 @@ class CommentController extends Controller
 {
 
 
+
+    public function index()
+    {
+        $comments = Comment::latest('updated_at')->paginate(10);
+        return response()->json(['data' => $comments]);
+    }
+
+
+
     public function store(StoreCommentRequest $request, $course_id)
     {
         $user = Auth::user();
