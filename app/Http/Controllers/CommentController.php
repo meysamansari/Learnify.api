@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comment;
 use App\Models\Course;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,5 +36,17 @@ class CommentController extends Controller
             'rate' => $rate
         ]);
         return response()->json(['message' => 'Comment successfully created', 'data' => [$comment]]);
+    }
+
+
+
+    public function show($comment_id)
+    {
+        try {
+            $comment = Comment::findOrFail($comment_id);
+            return response()->json(['message' => 'Comment retrieved successfully', 'data' => $comment]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Comment not found'], 404);
+        }
     }
 }
