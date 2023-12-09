@@ -101,4 +101,5 @@ Route::group(['prefix' => 'ticket','middleware'=>'auth:sanctum'], function (){
     Route::get('/',[TicketController::class, 'index']);
     Route::post('/{course_id}',[TicketController::class, 'store']);
     Route::get('/{ticket_id}',[TicketController::class, 'show']);
+    Route::put('/{id}',[TicketController::class, 'update']);
 });
