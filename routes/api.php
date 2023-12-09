@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
@@ -90,4 +91,12 @@ Route::group(['prefix' => 'comment','middleware'=>'auth:sanctum'], function () {
     Route::put('/{comment_id}',[CommentController::class, 'update']);
     Route::post('/reply/{course_id}',[CommentController::class, 'reply']);
     Route::delete('/{id}',[CommentController::class, 'destroy']);
+});
+
+
+
+// Ticket
+
+Route::group(['prefix' => 'ticket','middleware'=>'auth:sanctum'], function (){
+    Route::post('/{course_id}',[TicketController::class, 'store']);
 });
