@@ -13,6 +13,14 @@ class TicketController extends Controller
 
 
 
+    public function index()
+    {
+        $comments = Ticket::latest('updated_at')->paginate(10);
+        return response()->json(['data' => $comments]);
+    }
+
+
+
     public function store(StoreTicketRequest $request, $course_id)
     {
         $user = Auth::user();
