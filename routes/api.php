@@ -98,5 +98,6 @@ Route::group(['prefix' => 'comment','middleware'=>'auth:sanctum'], function () {
 // Ticket
 
 Route::group(['prefix' => 'ticket','middleware'=>'auth:sanctum'], function (){
+    Route::get('/',[TicketController::class, 'index']);
     Route::post('/{course_id}',[TicketController::class, 'store']);
 });
