@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\Favorite;
 use App\Models\Resume;
 use App\Models\User;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function update(Request $request)
+    public function update(UpdateUserRequest $request)
     {
         $user = Auth::user();
         $phoneNumber = $user->phone_number;
@@ -52,7 +53,6 @@ class UserController extends Controller
     public function show()
     {
         $user = Auth::user();
-
         if ($user->hasRole('mentor')) {
             $data = $user->load('resume');
             return response()->json(['message' => 'Mentor retrieved successfully', 'data' => $data]);

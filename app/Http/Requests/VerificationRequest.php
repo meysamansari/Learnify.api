@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class VerificationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,7 +23,6 @@ class LoginRequest extends FormRequest
     {
         return [
             'phone_number' => 'required|regex:/^09[0-9]{9}$/',
-            'verification_code' => 'required',
         ];
     }
     public function messages()

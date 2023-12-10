@@ -18,7 +18,7 @@ class Course extends Model
         'description',
         'image_id',
         'teaser_id',
-        'category',
+        'category_id',
         'price',
         'status',
         'step',
@@ -34,5 +34,13 @@ class Course extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
+    }
+    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class);
     }
 }

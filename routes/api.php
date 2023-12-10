@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -104,4 +107,31 @@ Route::group(['prefix' => 'ticket','middleware'=>'auth:sanctum'], function (){
     Route::put('/{id}',[TicketController::class, 'update']);
     Route::post('/reply/{course_id}',[TicketController::class, 'reply']);
     Route::delete('/{id}',[TicketController::class, 'destroy']);
+});
+
+
+
+// Category
+
+Route::group(['prefix' => 'category', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/index', [CategoryController::class, 'index']);
+    Route::get('/show/{category_id}', [CategoryController::class, 'show']);
+});
+
+
+
+// Favorite
+
+Route::group(['prefix' => 'favorite', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/index', [FavoriteController::class, 'index']);
+});
+
+
+
+// Order
+
+Route::group(['prefix' => 'order', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/show', [OrderController::class, 'show']);
+    Route::post('/store', [OrderController::class, 'store']);
+    Route::delete('/show/{course_id}', [OrderController::class, 'destroy']);
 });
