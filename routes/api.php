@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\MediaController;
@@ -104,4 +105,13 @@ Route::group(['prefix' => 'ticket','middleware'=>'auth:sanctum'], function (){
     Route::put('/{id}',[TicketController::class, 'update']);
     Route::post('/reply/{course_id}',[TicketController::class, 'reply']);
     Route::delete('/{id}',[TicketController::class, 'destroy']);
+});
+
+
+
+// Category
+
+Route::group(['prefix' => 'category', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/index', [CategoryController::class, 'indغعالهف سفشex']);
+    Route::get('/show/{category_id}', [CategoryController::class, 'show']);
 });
