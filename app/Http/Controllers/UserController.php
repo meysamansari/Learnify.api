@@ -33,7 +33,7 @@ class UserController extends Controller
                 }
         }
             }
-        $request = $request->except('_token', 'phone_number','email');
+        $request = $request->except('_token', 'phone_number');
         $update_user = User::where('phone_number', $phoneNumber)->get();
         if ($update_user->isNotEmpty()) {
             foreach ($update_user as $user) {
