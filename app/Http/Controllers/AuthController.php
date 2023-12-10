@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\SmsVerificationCode;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\VerificationRequest;
 use App\Models\User;
 use App\Models\Verification;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class AuthController extends Controller
     {
         $this->middleware('auth:sanctum', ['except' => ['sendVerificationCode','login']]);
     }
-    public function sendVerificationCode(Request $request)
+    public function sendVerificationCode(VerificationRequest $request)
     {
         $phone_number = $request->input('phone_number');
         $verification_code = rand(10000, 99999);
