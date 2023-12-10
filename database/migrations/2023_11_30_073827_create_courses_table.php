@@ -18,7 +18,7 @@ return new class extends Migration
             $table->longText('description')->nullable();
             $table->integer('image_id')->nullable();
             $table->integer('teaser_id')->nullable();
-            $table->string('category')->nullable();
+            $table->string('category_id')->nullable();
             $table->bigInteger('price')->nullable();
             $table->string('status')->nullable();
             $table->integer('step')->nullable();
