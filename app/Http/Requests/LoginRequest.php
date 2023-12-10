@@ -22,7 +22,14 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'phone_number' => 'required|regex:/^09[0-9]{9}$/',
+            'verification_code' => 'required',
+        ];
+    }
+    public function messages()
+    {
+        return [
+            'phone_number.regex' => "phone_number isn't correct",
         ];
     }
 }
