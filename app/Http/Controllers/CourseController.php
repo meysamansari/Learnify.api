@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Chapter;
+use App\Models\Comment;
 use App\Models\Course;
 use App\Models\Image;
 use App\Models\Lesson;
@@ -22,7 +24,7 @@ class CourseController extends Controller
         if ($user_record->resume && !is_null($user_record->resume->description) && !is_null($user_record->name) && !is_null($user_record->family)
             && !is_null($user_record->email) && !is_null($user_record->university) && !is_null($user_record->field_of_study)
             && !is_null($user_record->educational_stage) && !is_null($user_record->country) && !is_null($user_record->state)) {
-            $course = Course::create(['user_id' => $user->id, 'title' => $request->title, 'description' => $request->description, 'step' => 1]);
+            $course = Course::create(['user_id' => $user->id, 'title' => $request->title, 'description' => $request->description, 'step' => 1, 'status' => 'Pending']);
             return response()->json(['message' => 'course successfully created', 'data' => $course]);
         } else {
             return response()->json(['message' => 'mentor should filled personal profile'], 401);
@@ -54,9 +56,9 @@ class CourseController extends Controller
                     }
                 }
             } else if ($step == 3) {
-                $request->validate(['category' => 'required', //exists:category,id
+                $request->validate(['category_id' => 'required|exists:categories,id', //exists:category,id
                     'price' => 'required|integer']);
-                $course = Course::updateOrCreate(['id' => $course->id], ['category' => $request->category, 'price' => $request->price, 'status' => 'Pending']);
+                $course = Course::updateOrCreate(['id' => $course->id], ['category_id' => $request->category_id, 'price' => $request->price, 'status' => 'in_progress']);
             }
             $course_step = $course->step;
             if ($step >= $course_step && $step != 4) {
@@ -71,9 +73,10 @@ class CourseController extends Controller
         $course = Course::with('chapters.lessons')->findOrFail($course_id);
         $mentor = User::findOrFail($course->user_id);
         $resume=[];
+        $category=Category::findOrFail($course->category_id);
         $averageRate = $course->comments->avg('rate');
         $countComments = $course->comments->count();
-        $comments=$course->comments;
+        $comments = Comment::where('course_id', $course_id)->orderBy('updated_at', 'desc')->paginate(20);
         if ($mentor->resume&&!is_null($mentor->resume->description))
         {
             $resume=$mentor->resume->description;
@@ -109,6 +112,7 @@ class CourseController extends Controller
                 }
             }
             $Data = [
+                'category' =>$category,
                 'mentor' => $mentor,
                 'mentor_resume'=>$resume,
                 'chapter_count'=>$chapterCount,
