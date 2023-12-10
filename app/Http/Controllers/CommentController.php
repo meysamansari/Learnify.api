@@ -27,7 +27,7 @@ class CommentController extends Controller
     {
         $user = Auth::user();
         Course::findOrFail($course_id);
-        $existingComment = $user->comments()->where('course_id', $course_id)->first();
+        $existingComment = $user->comments()->where('course_id', $course_id)->whereNot('rate',null)->first();
         $rate = $existingComment ? null : $request->rate;
         $comment = Comment::create([
             'message' => $request->message,
