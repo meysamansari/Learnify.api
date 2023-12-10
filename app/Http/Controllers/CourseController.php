@@ -71,6 +71,9 @@ class CourseController extends Controller
         $course = Course::with('chapters.lessons')->findOrFail($course_id);
         $mentor = User::findOrFail($course->user_id);
         $resume=[];
+        $averageRate = $course->comments->avg('rate');
+        $countComments = $course->comments->count();
+        $comments=$course->comments;
         if ($mentor->resume&&!is_null($mentor->resume->description))
         {
             $resume=$mentor->resume->description;
@@ -90,14 +93,14 @@ class CourseController extends Controller
             $chapterCount = $course->chapters->count();
             $lessonMedia = [];
             $lessonCount = 0;
-            foreach ($course['chapters'] as $chapterData) {
+        foreach ($course['chapters'] as $chapterData) {
                 $lessonCount += $chapterData->lessons->count();
                 foreach ($chapterData['lessons'] as $lessonData) {
                     $video_id = $lessonData['video_id'];
                     if ($video_id) {
                         $video = Video::find($video_id)->first();
                         $media = $video->getMedia('*');
-                        $lessonMedia = [
+                        $lessonMedia[] = [
                             'lesson_id' => $lessonData->id,
                             'media' => $media,
                             'visibility' => $lessonData->visibility,
@@ -114,6 +117,11 @@ class CourseController extends Controller
                 'Course_teaser' => $courseVideo,
                 'Lesson_media' => $lessonMedia,
             ];
-            return response()->json(['course' => $course, 'data' => $Data]);
+            $commentsData=[
+                'averageRate' => $averageRate,
+                'countComments'=>$countComments,
+                'comments'=>$comments,
+            ];
+            return response()->json(['course' => $course, 'data' => $Data,'Comments data' =>$commentsData]);
     }
 }
