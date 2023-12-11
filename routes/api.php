@@ -8,6 +8,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
@@ -132,6 +133,16 @@ Route::group(['prefix' => 'favorite', 'middleware' => 'auth:sanctum'], function 
 
 Route::group(['prefix' => 'order', 'middleware' => 'auth:sanctum'], function () {
     Route::get('/show', [OrderController::class, 'show']);
-    Route::post('/store', [OrderController::class, 'store']);
-    Route::delete('/show/{course_id}', [OrderController::class, 'destroy']);
+    Route::post('/store/{course_id}', [OrderController::class, 'store']);
+    Route::delete('/delete/{course_id}', [OrderController::class, 'destroy']);
+});
+
+
+// Pay
+
+
+
+Route::group(['prefix' => 'transaction'], function () {
+    Route::post('/pay/{order_id}', [TransactionController::class, 'pay']);
+    Route::get('/callback', [TransactionController::class, 'callback'])->name('payment.callback');
 });
