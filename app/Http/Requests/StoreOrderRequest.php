@@ -22,7 +22,7 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'course_id' => 'required|exists:courses,id',
+            //
         ];
     }
 }
