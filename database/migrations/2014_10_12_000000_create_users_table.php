@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('educational_stage')->nullable();
             $table->string('country')->nullable();
             $table->string('state')->nullable();
+            $table->integer('image_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
