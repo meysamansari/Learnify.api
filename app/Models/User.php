@@ -33,7 +33,8 @@ class User extends Authenticatable
         'field_of_study',
         'educational_stage',
         'country',
-        'state'
+        'state',
+        'image_id'
     ];
 
     /**
@@ -63,8 +64,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class);
     }
-    public function user(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function orders(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Order::class);
+    }
+    public function transaction(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Transaction::class);
     }
 }
