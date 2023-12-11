@@ -21,4 +21,8 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function transaction(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
