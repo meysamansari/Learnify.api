@@ -7,13 +7,13 @@ use App\Models\Order;
 
 class OrderController extends Controller
 {
-    public function store(StoreOrderRequest $request)
+    public function store(StoreOrderRequest $request,$course_id)
     {
         $user = auth()->user();
 
         $order = Order::firstOrCreate(['user_id' => $user->id, 'status' => 'cart',]);
 
-        $order->courses()->sync($request->course_id);
+        $order->courses()->sync($course_id);
 
         $total_price = $order->courses()->sum('price');
 
