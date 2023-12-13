@@ -70,7 +70,7 @@ Route::group(['prefix' => 'blogs','middleware'=>'auth:sanctum'], function (){
     Route::get('/',[BlogController::class, 'index']);
     Route::post('/',[BlogController::class, 'store']);
     Route::get('/{id}',[BlogController::class, 'show']);
-    Route::put('/{id}',[BlogController::class, 'update']);
+    Route::put('/{blog_id}',[BlogController::class, 'update']);
     Route::delete('/{id}',[BlogController::class, 'destroy']);
 });
 
