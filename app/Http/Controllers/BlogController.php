@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\Image;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -13,10 +14,12 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         $query = $request->input('query');
-        $blogs = Blog::where('title', 'like', "%$query%")
+        $blogs = Blog::with('image.media')
+            ->where('title', 'like', "%$query%")
             ->orWhere('description', 'like', "%$query%")
             ->orderBy('created_at', 'desc')
             ->paginate(10);
+
         return response()->json([
             'message' => 'Blogs retrieved successfully',
             'blogs' => $blogs,
@@ -29,11 +32,25 @@ class BlogController extends Controller
         $request->validate([
             'title' => 'required',
             'description' => 'required',
-            'cover' => 'required|image|mimes:jpeg,png|max:2048',
+            'image_id' => 'nullable|exists:images,id',
         ]);
-        $blog = Blog::create($request->only(['title', 'description']));
-        $blog->addMediaFromRequest('cover')
-            ->toMediaCollection('cover');
+
+        $blogData = [
+            'title' => $request->title,
+            'description' => $request->description,
+            'image_id' => $request->image_id,
+        ];
+        $blog = Blog::create($blogData);
+
+        if ($request->image_id) {
+            $image = Image::findOrFail($request->image_id);
+            $image->update([
+                'status' => 'use',
+                'imageable_id' => $blog->id,
+                'imageable_type' => Blog::class,
+            ]);
+        }
+
         return response()->json([
             'message' => 'Blog created successfully',
             'blog' => $blog,
@@ -45,11 +62,14 @@ class BlogController extends Controller
     {
         try {
             $blog = Blog::findOrFail($id);
-            $cover = $blog->getMedia('cover');
+            $image = $blog->image;
+            $imageData=[];
+            if ($image){
+            $imageData = $image->getMedia('*');}
             return response()->json([
                 'message' => 'Blog retrieved successfully',
                 'blog' => $blog,
-                'cover' => $cover,
+                'image_data' => $imageData,
             ]);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Blog not found'], 404);
@@ -57,22 +77,30 @@ class BlogController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $blog_id)
     {
         try {
-            $validatedData = $request->validate([
-                'title' => 'required|string|max:255',
-                'description' => 'required|string',
-                'cover' => 'sometimes|image|mimes:jpeg,png,gif|max:2048',
+            $request->validate([
+                'title' => 'required',
+                'description' => 'required',
+                'image_id' => 'nullable|exists:images,id',
             ]);
 
-            $blog = Blog::findOrFail($id);
-            $blog->update($validatedData); // Use $validatedData directly
+            $blog = Blog::findOrFail($blog_id);
 
-            if ($request->hasFile('cover')) {
-                $blog->clearMediaCollection('cover');
-                $blog->addMediaFromRequest('cover')
-                    ->toMediaCollection('cover');
+            $blogData = [
+                'title' => $request->title,
+                'description' => $request->description,
+                'image_id' => $request->image_id,
+            ];
+            $blog->update($blogData);
+            if ($request->image_id) {
+                $image = Image::findOrFail($request->image_id);
+                $image->update([
+                    'status' => 'use',
+                    'imageable_id' => $blog->id,
+                    'imageable_type' => Blog::class,
+                ]);
             }
             return response()->json([
                 'message' => 'Blog updated successfully',
@@ -88,11 +116,11 @@ class BlogController extends Controller
     {
         try {
             $blog = Blog::findOrFail($id);
-            $blog->clearMediaCollection('cover');
+            $blog->image->clearMediaCollection('*');
+            $blog->image->delete();
             $blog->delete();
             return response()->json([
                 'message' => 'Blog deleted successfully',
-                'blog' => $blog,
             ]);
         } catch (ModelNotFoundException $e) {
             return response()->json(['error' => 'Blog not found'], 404);
