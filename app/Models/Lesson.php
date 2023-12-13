@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Lesson extends Model
 {
@@ -18,5 +19,9 @@ class Lesson extends Model
     public function chapters(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Chapter::class);
+    }
+    public function video(): MorphOne
+    {
+        return $this->morphOne(Video::class, 'videoable');
     }
 }
