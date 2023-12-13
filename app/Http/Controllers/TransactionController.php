@@ -41,7 +41,6 @@ class TransactionController extends Controller
         $payment = $request
             ->amount($order->total_price)
             ->verify();
-//        dd($transaction);
 
         $order->update(['status' => 'paid']);
 
@@ -62,7 +61,7 @@ class TransactionController extends Controller
         }
 
         if ($payment->alreadyVerified()) {
-            dd('already_verified');
+            return response()->json(['message' => 'already_verified']);
         }
 
         if ($payment->failed()) {
