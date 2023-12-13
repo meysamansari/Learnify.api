@@ -42,10 +42,22 @@ class CourseController extends Controller
                 $request->validate(['title' => 'required', 'description' => 'required']);
                 $course = Course::updateOrCreate(['id' => $course->id, 'user_id' => $user->id], ['title' => $request->title, 'description' => $request->description]);
             } else if ($step == 1) {
-                $request->validate(['image_id' => 'required', //exists:media,id
-                    'teaser_id' => 'required'//exists:media,id
+                $request->validate(['image_id' => 'required|exists:images,id',
+                    'teaser_id' => 'required|exists:videos,id'
                 ]);
                 $course = Course::updateOrCreate(['id' => $course->id,], ['image_id' => $request->image_id, 'teaser_id' => $request->teaser_id,]);
+                    $image = Image::findOrFail($request->image_id);
+                    $image->update([
+                        'status' => 'use',
+                        'imageable_id' => $course->id,
+                        'imageable_type' => Course::class,
+                    ]);
+                $video = Video::findOrFail($request->teaser_id);
+                $video->update([
+                    'status' => 'use',
+                    'videoable_id' => $course->id,
+                    'videoable_type' => Course::class,
+                ]);
             } else if ($step == 2) {
                 $validated = $request->validate(['chapters' => 'required|array',]);
                 foreach ($validated['chapters'] as $chapterData) {
@@ -53,6 +65,12 @@ class CourseController extends Controller
 
                     foreach ($chapterData['lessons'] as $lessonData) {
                         Lesson::updateOrCreate(['id' => $lessonData['id']], ['chapter_id' => $chapter->id, 'title' => $lessonData['title'], 'time' => $lessonData['time'], 'visibility' => $lessonData['visibility'], 'video_id' => $lessonData['video_id'],]);
+                        $video = Video::findOrFail($lessonData['video_id']);
+                        $video->update([
+                            'status' => 'use',
+                            'videoable_id' => $lessonData['id'],
+                            'videoable_type' => Lesson::class,
+                        ]);
                     }
                 }
             } else if ($step == 3) {
@@ -70,62 +88,31 @@ class CourseController extends Controller
 
     public function show($course_id)
     {
-        $course = Course::with('chapters.lessons')->findOrFail($course_id);
+        $course = Course::with([
+            'chapters.lessons.video.media',
+            'image.media',
+            'video.media'
+        ])->findOrFail($course_id);
         $mentor = User::findOrFail($course->user_id);
-        $resume=[];
         $category=Category::findOrFail($course->category_id);
         $averageRate = $course->comments->avg('rate');
         $countComments = $course->comments->count();
         $comments = Comment::where('course_id', $course_id)->orderBy('updated_at', 'desc')->paginate(20);
-        if ($mentor->resume&&!is_null($mentor->resume->description))
-        {
-            $resume=$mentor->resume->description;
-        }
-            $image_id = $course->image_id;
-            $teaser_id = $course->teaser_id;
-            $courseImage = [];
-            $courseVideo = [];
-            if ($image_id) {
-                $image = Image::find($image_id)->first();
-                $courseImage = $image->getMedia('*');
-            }
-            if ($teaser_id) {
-                $video = Video::find($teaser_id)->first();
-                $courseVideo = $video->getMedia('*');
-            }
             $chapterCount = $course->chapters->count();
-            $lessonMedia = [];
             $lessonCount = 0;
         foreach ($course['chapters'] as $chapterData) {
                 $lessonCount += $chapterData->lessons->count();
-                foreach ($chapterData['lessons'] as $lessonData) {
-                    $video_id = $lessonData['video_id'];
-                    if ($video_id) {
-                        $video = Video::find($video_id)->first();
-                        $media = $video->getMedia('*');
-                        $lessonMedia[] = [
-                            'lesson_id' => $lessonData->id,
-                            'media' => $media,
-                            'visibility' => $lessonData->visibility,
-                        ];
-                    }
-                }
             }
-            $Data = [
+            $data = [
+                'course'=>$course,
                 'category' =>$category,
                 'mentor' => $mentor,
-                'mentor_resume'=>$resume,
                 'chapter_count'=>$chapterCount,
                 'lesson_count'=>$lessonCount,
-                'Course_image' => $courseImage,
-                'Course_teaser' => $courseVideo,
-                'Lesson_media' => $lessonMedia,
-            ];
-            $commentsData=[
                 'averageRate' => $averageRate,
                 'countComments'=>$countComments,
                 'comments'=>$comments,
             ];
-            return response()->json(['course' => $course, 'data' => $Data,'Comments data' =>$commentsData]);
+            return response()->json(['data' => $data]);
     }
 }
