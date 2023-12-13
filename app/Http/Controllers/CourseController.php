@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CourseStatusRequest;
 use App\Models\Category;
 use App\Models\Chapter;
 use App\Models\Comment;
@@ -114,5 +115,12 @@ class CourseController extends Controller
                 'comments'=>$comments,
             ];
             return response()->json(['data' => $data]);
+    }
+    public function courseStatus(CourseStatusRequest $request,$course_id){
+        $course = Course::findOrFail($course_id);
+        $course->update([
+            'status' => $request->status
+        ]);
+        return response()->json(['message' => 'course status changed successfully']);
     }
 }
