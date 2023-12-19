@@ -70,7 +70,7 @@ Route::group(['prefix' => 'blogs','middleware'=>'auth:sanctum'], function (){
     Route::get('/',[BlogController::class, 'index']);
     Route::post('/',[BlogController::class, 'store']);
     Route::get('/{id}',[BlogController::class, 'show']);
-    Route::put('/{id}',[BlogController::class, 'update']);
+    Route::put('/{blog_id}',[BlogController::class, 'update']);
     Route::delete('/{id}',[BlogController::class, 'destroy']);
 });
 
@@ -81,6 +81,7 @@ Route::group(['prefix' => 'blogs','middleware'=>'auth:sanctum'], function (){
 Route::group(['prefix' => 'course', 'middleware' => 'auth:sanctum'], function () {
     Route::post('/create', [CourseController::class, 'create']);
     Route::get('/show/{course_id}', [CourseController::class, 'show']);
+    Route::put('/status/{course_id}', [CourseController::class, 'courseStatus']);
     Route::put('/update/{course_id}/{step?}', [CourseController::class, 'update'])->whereIn('step',[0,1,2,3,4]);
 });
 
