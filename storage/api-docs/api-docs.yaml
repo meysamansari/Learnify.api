@@ -1,0 +1,896 @@
+openapi: 3.0.0
+info:
+  title: 'Laravel OpenApi Demo Documentation'
+  description: 'L5 Swagger OpenApi description'
+  contact:
+    email: admin@admin.com
+  license:
+    name: 'Apache 2.0'
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  version: 1.0.0
+servers:
+  -
+    url: 'http://my-default-host.com'
+    description: 'Demo API Server'
+paths:
+  /auth/sendVerificationCode:
+    post:
+      tags:
+        - Auth
+      summary: 'Send verification code'
+      description: 'Send verification code to the specified phone number'
+      operationId: sendVerificationCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+      responses:
+        200:
+          description: 'Verification code send successfully'
+  /auth/login/{type}:
+    post:
+      tags:
+        - Auth
+      summary: 'User login'
+      description: 'Login a user with phone number and verification code'
+      operationId: loginUser
+      parameters:
+        - name: type
+          in: path
+          required: true
+          description: 'Type of user (e.g., mentor, admin)'
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        200:
+          description: 'User logged in successfully'
+        401:
+          description: 'Verification code is wrong'
+        404:
+          description: 'User not found'
+  /auth/logout:
+    post:
+      tags:
+        - Auth
+      summary: 'User logout'
+      description: 'Logout the authenticated user'
+      operationId: logoutUser
+      responses:
+        200:
+          description: 'User logged out successfully'
+  /courses/create:
+    post:
+      tags:
+        - Courses
+      summary: 'Create a new course'
+      description: 'Create a new course with the specified data'
+      operationId: createCourse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseCreateRequest'
+      responses:
+        200:
+          description: 'Course created successfully'
+        401:
+          description: 'Unauthorized'
+        422:
+          description: 'Validation error'
+  /courses/update/{course_id}/{step}:
+    put:
+      tags:
+        - Courses
+      summary: 'Update course information'
+      description: 'Update course information with the specified data'
+      operationId: updateCourse
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          description: 'ID of the course to be updated'
+          schema:
+            type: integer
+        - name: step
+          in: path
+          required: true
+          description: 'Step of the course update process'
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseUpdateRequest'
+      responses:
+        200:
+          description: 'Course updated successfully'
+        401:
+          description: 'Unauthorized'
+        404:
+          description: 'Course not found'
+  /courses/show/{course_id}:
+    get:
+      tags:
+        - Courses
+      summary: 'Get course information'
+      description: 'Get detailed information about a specific course'
+      operationId: showCourse
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          description: 'ID of the course to be retrieved'
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Course information retrieved successfully'
+        404:
+          description: 'Course not found'
+  /blogs:
+    get:
+      tags:
+        - Blogs
+      summary: 'Get list of blogs'
+      description: 'Returns list of blogs'
+      operationId: getBlogsList
+      parameters:
+        - name: query
+          in: query
+          description: 'Search query for blogs'
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'Blogs retrieved successfully'
+  /blogs/store:
+    post:
+      tags:
+        - Blogs
+      summary: 'Create a new blog'
+      description: 'Create a new blog with the specified data'
+      operationId: createBlog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlogCreateRequest'
+      responses:
+        200:
+          description: 'Blog created successfully'
+        422:
+          description: 'Validation error'
+  /blogs/show/{id}:
+    get:
+      tags:
+        - Blogs
+      summary: 'Get blog information'
+      description: 'Get detailed information about a specific blog'
+      operationId: showBlog
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 'ID of the blog to be retrieved'
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Blog information retrieved successfully'
+        404:
+          description: 'Blog not found'
+  /blogs/update/{blog_id}:
+    put:
+      tags:
+        - Blogs
+      summary: 'Update blog information'
+      description: 'Update blog information with the specified data'
+      operationId: updateBlog
+      parameters:
+        - name: blog_id
+          in: path
+          required: true
+          description: 'ID of the blog to be updated'
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlogUpdateRequest'
+      responses:
+        200:
+          description: 'Blog updated successfully'
+        404:
+          description: 'Blog not found'
+  /blogs/destroy/{id}:
+    delete:
+      tags:
+        - Blogs
+      summary: 'Delete a blog'
+      description: 'Delete a blog with the specified ID'
+      operationId: destroyBlog
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 'ID of the blog to be deleted'
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Blog deleted successfully'
+        404:
+          description: 'Blog not found'
+  /comments:
+    get:
+      tags:
+        - Comments
+      summary: 'Get list of comments'
+      description: 'Returns list of comments'
+      operationId: getCommentsList
+      responses:
+        200:
+          description: 'Comments retrieved successfully'
+  /comments/store/{course_id}:
+    post:
+      tags:
+        - Comments
+      summary: 'Create a new comment'
+      description: 'Create a new comment with the specified data'
+      operationId: createComment
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          description: 'ID of the course to add the comment to'
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreateRequest'
+      responses:
+        200:
+          description: 'Comment created successfully'
+        404:
+          description: 'Course not found'
+  /comments/show/{comment_id}:
+    get:
+      tags:
+        - Comments
+      summary: 'Get comment information'
+      description: 'Get detailed information about a specific comment'
+      operationId: showComment
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          description: 'ID of the comment to be retrieved'
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Comment information retrieved successfully'
+        404:
+          description: 'Comment not found'
+  /comments/update/{comment_id}:
+    put:
+      tags:
+        - Comments
+      summary: 'Update comment information'
+      description: 'Update comment information with the specified data'
+      operationId: updateComment
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          description: 'ID of the comment to be updated'
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentUpdateRequest'
+      responses:
+        200:
+          description: 'Comment updated successfully'
+        404:
+          description: 'Comment not found'
+  /comments/reply/{comment_id}:
+    post:
+      tags:
+        - Comments
+      summary: 'Reply to a comment'
+      description: 'Reply to a comment with the specified data'
+      operationId: replyToComment
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          description: 'ID of the comment to reply to'
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplyCommentRequest'
+      responses:
+        200:
+          description: 'Reply added successfully'
+        404:
+          description: 'Comment not found'
+  /comments/destroy/{comment_id}:
+    delete:
+      tags:
+        - Comments
+      summary: 'Delete a comment'
+      description: 'Delete a comment with the specified ID'
+      operationId: destroyComment
+      parameters:
+        - name: comment_id
+          in: path
+          required: true
+          description: 'ID of the comment to be deleted'
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Comment deleted successfully'
+        404:
+          description: 'Comment not found'
+  /tickets:
+    get:
+      tags:
+        - Tickets
+      summary: 'Get list of tickets'
+      description: 'Returns list of tickets'
+      operationId: getTicketList
+      responses:
+        200:
+          description: 'Tickets retrieved successfully'
+    post:
+      tags:
+        - Tickets
+      summary: 'Create a new ticket'
+      description: 'Create a new ticket with the specified data'
+      operationId: createTicket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketCreateRequest'
+      responses:
+        200:
+          description: 'Ticket created successfully'
+        401:
+          description: 'Unauthorized'
+        422:
+          description: 'Validation error'
+  /tickets/{ticket_id}:
+    get:
+      tags:
+        - Tickets
+      summary: 'Get ticket information'
+      description: 'Get detailed information about a specific ticket'
+      operationId: showTicket
+      parameters:
+        - name: ticket_id
+          in: path
+          required: true
+          description: 'ID of the ticket to be retrieved'
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Ticket information retrieved successfully'
+        404:
+          description: 'Ticket not found'
+    put:
+      tags:
+        - Tickets
+      summary: 'Update ticket information'
+      description: 'Update ticket information with the specified data'
+      operationId: updateTicket
+      parameters:
+        - name: ticket_id
+          in: path
+          required: true
+          description: 'ID of the ticket to be updated'
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketUpdateRequest'
+      responses:
+        200:
+          description: 'Ticket updated successfully'
+        401:
+          description: 'Unauthorized'
+        404:
+          description: 'Ticket not found'
+    delete:
+      tags:
+        - Tickets
+      summary: 'Delete a ticket'
+      description: 'Delete a ticket with the specified ID'
+      operationId: deleteTicket
+      parameters:
+        - name: ticket_id
+          in: path
+          required: true
+          description: 'ID of the ticket to be deleted'
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Ticket deleted successfully'
+        404:
+          description: 'Ticket not found'
+  /notes/update-or-create/{course_id}:
+    post:
+      tags:
+        - Notes
+      summary: 'Update or create a note for a course'
+      description: 'Update or create a note for the specified course and user'
+      operationId: updateOrCreateNote
+      parameters:
+        - name: course_id
+          in: path
+          required: true
+          description: 'ID of the course for the note'
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoteUpdateOrCreateRequest'
+      responses:
+        200:
+          description: 'Note updated or created successfully'
+        404:
+          description: 'Note not found'
+  /notes/show/{id}:
+    get:
+      tags:
+        - Notes
+      summary: 'Get note information'
+      description: 'Get detailed information about a specific note'
+      operationId: showNote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 'ID of the note to be retrieved'
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Note information retrieved successfully'
+        404:
+          description: 'Note not found'
+  /notes/destroy/{id}:
+    delete:
+      tags:
+        - Notes
+      summary: 'Delete a note'
+      description: 'Delete a note with the specified ID'
+      operationId: destroyNote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 'ID of the note to be deleted'
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Note deleted successfully'
+        404:
+          description: 'Note not found'
+  /transactions/pay/{order_id}:
+    post:
+      tags:
+        - Transactions
+      summary: 'Initiate a payment for an order'
+      description: 'Initiate a payment for the specified order'
+      operationId: initiatePayment
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          description: 'ID of the order for payment'
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Payment initiated successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentInitiationResponse'
+        422:
+          description: 'Payment initiation failed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentInitiationFailedResponse'
+  /transactions/callback:
+    post:
+      tags:
+        - Transactions
+      summary: 'Handle payment callback'
+      description: 'Handle the callback from the payment gateway'
+      operationId: handlePaymentCallback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCallbackRequest'
+      responses:
+        200:
+          description: 'Payment callback handled successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCallbackResponse'
+        422:
+          description: 'Payment callback handling failed'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCallbackFailedResponse'
+components:
+  schemas:
+    VerificationRequest:
+      type: object
+      properties:
+        phone_number:
+          type: string
+    LoginRequest:
+      type: object
+      properties:
+        phone_number:
+          type: string
+        verification_code:
+          type: string
+    CourseCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+    CourseUpdateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        image_id:
+          type: integer
+        teaser_id:
+          type: integer
+        chapters:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+              lessons:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    time:
+                      type: string
+                    visibility:
+                      type: boolean
+                    video_id:
+                      type: integer
+        category_id:
+          type: integer
+        price:
+          type: integer
+    BlogCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        image_id:
+          type: integer
+    BlogUpdateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        image_id:
+          type: integer
+    CommentCreateRequest:
+      type: object
+      properties:
+        message:
+          type: string
+        rate:
+          type: integer
+    CommentUpdateRequest:
+      type: object
+      properties:
+        message:
+          type: string
+        rate:
+          type: integer
+    ReplyCommentRequest:
+      type: object
+      properties:
+        reply:
+          type: string
+        NoteUpdateOrCreateRequest:
+          type: object
+          properties:
+            description:
+              type: string
+        OrderStoreRequest:
+          type: object
+          properties:
+            quantity:
+              type: integer
+        OrderCheckoutRequest:
+          type: object
+          properties:
+            payment_method:
+              type: string
+            shipping_address:
+              type: string
+        OrderShowResponse:
+          type: object
+          properties:
+            order:
+              type: object
+              properties:
+                id:
+                  type: integer
+                user_id:
+                  type: integer
+                status:
+                  type: string
+                total_price:
+                  type: integer
+                created_at:
+                  type: string
+                updated_at:
+                  type: string
+                courses:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      image_id:
+                        type: integer
+                      teaser_id:
+                        type: integer
+                      category_id:
+                        type: integer
+                      price:
+                        type: integer
+        OrderRemoveResponse:
+          type: object
+          properties:
+            message:
+              type: string
+            order:
+              type: object
+              properties:
+                id:
+                  type: integer
+                user_id:
+                  type: integer
+                status:
+                  type: string
+                total_price:
+                  type: integer
+                created_at:
+                  type: string
+                updated_at:
+                  type: string
+                courses:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      image_id:
+                        type: integer
+                      teaser_id:
+                        type: integer
+                      category_id:
+                        type: integer
+                      price:
+                        type: integer
+        OrderCheckoutResponse:
+          type: object
+          properties:
+            message:
+              type: string
+            order:
+              type: object
+              properties:
+                id:
+                  type: integer
+                user_id:
+                  type: integer
+                status:
+                  type: string
+                total_price:
+                  type: integer
+                created_at:
+                  type: string
+                updated_at:
+                  type: string
+                courses:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      image_id:
+                        type: integer
+                      teaser_id:
+                        type: integer
+                      category_id:
+                        type: integer
+                      price:
+                        type: integer
+        OrderShowCartResponse:
+          type: object
+          properties:
+            order:
+              type: object
+              properties:
+                id:
+                  type: integer
+                user_id:
+                  type: integer
+                status:
+                  type: string
+                total_price:
+                  type: integer
+                created_at:
+                  type: string
+                updated_at:
+                  type: string
+                courses:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      image_id:
+                        type: integer
+                      teaser_id:
+                        type: integer
+                      category_id:
+                        type: integer
+                      price:
+                        type: integer
+    TicketCreateRequest:
+      type: object
+      properties:
+        message:
+          type: string
+    TicketUpdateRequest:
+      type: object
+      properties:
+        message:
+          type: string
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: integer
+        message:
+          type: string
+        reply:
+          type: string
+        course_id:
+          type: integer
+        user_id:
+          type: integer
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    NoteUpdateOrCreateRequest:
+      type: object
+      properties:
+        description:
+          type: string
+    PaymentInitiationResponse:
+      type: object
+      properties:
+        paymentUrl:
+          type: string
+    PaymentInitiationFailedResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    PaymentCallbackRequest:
+      type: object
+      properties:
+        transactionId:
+          type: string
+    PaymentCallbackResponse:
+      type: object
+      properties:
+        reference_id:
+          type: string
+        transaction:
+          // Add properties from your Transaction model
+        order:
+          // Add properties from your Order model
+    PaymentCallbackFailedResponse:
+      type: object
+      properties:
+        message:
+          type: string
