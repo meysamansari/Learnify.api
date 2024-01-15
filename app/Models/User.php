@@ -27,13 +27,13 @@ class User extends Authenticatable
         'email',
         'email_verified_at',
         'phone_number',
-        'age',
+        'birthday',
         'gender',
         'university',
         'field_of_study',
         'educational_stage',
-        'country',
         'state',
+        'city',
         'image_id'
     ];
 

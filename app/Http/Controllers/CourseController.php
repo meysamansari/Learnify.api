@@ -24,7 +24,7 @@ class CourseController extends Controller
         $user_record = User::find($user->id);
         if ($user_record->resume && !is_null($user_record->resume->description) && !is_null($user_record->name) && !is_null($user_record->family)
             && !is_null($user_record->email) && !is_null($user_record->university) && !is_null($user_record->field_of_study)
-            && !is_null($user_record->educational_stage) && !is_null($user_record->country) && !is_null($user_record->state)) {
+            && !is_null($user_record->educational_stage) && !is_null($user_record->state) && !is_null($user_record->city)) {
             $course = Course::create(['user_id' => $user->id, 'title' => $request->title, 'description' => $request->description, 'step' => 1, 'status' => 'Pending']);
             return response()->json(['message' => 'course successfully created', 'data' => $course]);
         } else {

@@ -18,13 +18,13 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone_number');
-            $table->integer('age')->nullable();
+            $table->date('birthday')->nullable();
             $table->string('gender')->nullable();
             $table->string('university')->nullable();
             $table->string('field_of_study')->nullable();
             $table->string('educational_stage')->nullable();
-            $table->string('country')->nullable();
             $table->string('state')->nullable();
+            $table->string('city')->nullable();
             $table->integer('image_id')->nullable();
             $table->rememberToken();
             $table->timestamps();

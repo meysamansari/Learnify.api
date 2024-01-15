@@ -25,13 +25,14 @@ class UpdateUserRequest extends FormRequest
             'name' => 'nullable|string|max:255',
             'family' => 'nullable|string|max:255',
             'email' => 'nullable|email|unique:users,email|max:255',
-            'age' => 'nullable|integer|min:0|max:150',
+            'birthday' => 'nullable|date|date_format:Y-m-d',
             'gender' => 'nullable|string',
             'university' => 'nullable|string|max:255',
             'field_of_study' => 'nullable|string|max:255',
             'educational_stage' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:255',
             'state' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'image_id' => 'nullable|exists:images,id'
         ];
     }
 }
