@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\FilterController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TicketController;
@@ -146,4 +147,13 @@ Route::group(['prefix' => 'order', 'middleware' => 'auth:sanctum'], function () 
 Route::group(['prefix' => 'transaction'], function () {
     Route::post('/pay/{order_id}', [TransactionController::class, 'pay']);
     Route::get('/callback', [TransactionController::class, 'callback'])->name('payment.callback');
+});
+
+
+// Filter
+
+
+
+Route::group(['prefix' => 'filter'], function () {
+    Route::post('/course}', [FilterController::class, 'filterAndSortCourses']);
 });
