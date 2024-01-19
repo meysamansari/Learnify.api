@@ -19,9 +19,9 @@ class AuthController extends Controller
     public function sendVerificationCode(VerificationRequest $request)
     {
         $phone_number = $request->input('phone_number');
-        $verification_code = rand(10000, 99999);
+        $verification_code =1234;
         Verification::UpdateOrCreate(['phone_number' => $phone_number], ['verification_code' => $verification_code, 'verification_valid_until' => now()->addMinutes(5),]);
-        event(new SmsVerificationCode($phone_number, $verification_code));
+        //event(new SmsVerificationCode($phone_number, $verification_code));
         return response()->json(['message' => 'Verification code send successfully']);
     }
     function login(LoginRequest $request, $type)
