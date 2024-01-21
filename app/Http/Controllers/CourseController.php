@@ -36,57 +36,78 @@ class CourseController extends Controller
     {
         $user = Auth::user();
         $course = $user->courses()->find($course_id);
+
         if (!$course) {
             return response()->json(['error' => 'Course not found or does not belong to this user'], 404);
-        } else {
-            if ($step == 0) {
-                $request->validate(['title' => 'required', 'description' => 'required']);
-                $course = Course::updateOrCreate(['id' => $course->id, 'user_id' => $user->id], ['title' => $request->title, 'description' => $request->description]);
-            } else if ($step == 1) {
-                $request->validate(['image_id' => 'required|exists:images,id',
-                    'teaser_id' => 'required|exists:videos,id'
-                ]);
-                $course = Course::updateOrCreate(['id' => $course->id,], ['image_id' => $request->image_id, 'teaser_id' => $request->teaser_id,]);
-                    $image = Image::findOrFail($request->image_id);
-                    $image->update([
-                        'status' => 'use',
-                        'imageable_id' => $course->id,
-                        'imageable_type' => Course::class,
-                    ]);
-                $video = Video::findOrFail($request->teaser_id);
-                $video->update([
-                    'status' => 'use',
-                    'videoable_id' => $course->id,
-                    'videoable_type' => Course::class,
-                ]);
-            } else if ($step == 2) {
-                $validated = $request->validate(['chapters' => 'required|array',]);
-                foreach ($validated['chapters'] as $chapterData) {
-                    $chapter = Chapter::updateOrCreate(['id' => $chapterData['id']], ['course_id' => $course->id, 'title' => $chapterData['title']]);
-
-                    foreach ($chapterData['lessons'] as $lessonData) {
-                        Lesson::updateOrCreate(['id' => $lessonData['id']], ['chapter_id' => $chapter->id, 'title' => $lessonData['title'], 'time' => $lessonData['time'], 'visibility' => $lessonData['visibility'], 'video_id' => $lessonData['video_id'],]);
-                        $video = Video::findOrFail($lessonData['video_id']);
-                        $video->update([
-                            'status' => 'use',
-                            'videoable_id' => $lessonData['id'],
-                            'videoable_type' => Lesson::class,
-                        ]);
-                    }
-                }
-            } else if ($step == 3) {
-                $request->validate(['category_id' => 'required|exists:categories,id', //exists:category,id
-                    'price' => 'required|integer']);
-                $course = Course::updateOrCreate(['id' => $course->id], ['category_id' => $request->category_id, 'price' => $request->price, 'status' => 'in_progress']);
-            }
-            $course_step = $course->step;
-            if ($step >= $course_step && $step != 4) {
-                $course->update(['step' => $step + 1]);
-            }
-            return response()->json(['message' => 'course successfully updated', 'data' => $course]);
         }
-    }
 
+        if ($step == 0) {
+            $request->validate(['title' => 'required', 'description' => 'required']);
+            $course->update(['title' => $request->title, 'description' => $request->description]);
+        } else if ($step == 1) {
+            $request->validate([
+                'image_id' => 'required|exists:images,id',
+                'teaser_id' => 'required|exists:videos,id'
+            ]);
+
+            $course->update(['image_id' => $request->image_id, 'teaser_id' => $request->teaser_id]);
+
+            $image = Image::findOrFail($request->image_id);
+            $image->update([
+                'status' => 'use',
+                'imageable_id' => $course->id,
+                'imageable_type' => Course::class,
+            ]);
+
+            $video = Video::findOrFail($request->teaser_id);
+            $video->update([
+                'status' => 'use',
+                'videoable_id' => $course->id,
+                'videoable_type' => Course::class,
+            ]);
+        } else if ($step == 2) {
+            $validated = $request->validate(['chapters' => 'required|array']);
+
+            foreach ($validated['chapters'] as $chapterData) {
+                $chapter = Chapter::updateOrCreate(['id' => $chapterData['id']], ['course_id' => $course->id, 'title' => $chapterData['title']]);
+
+                foreach ($chapterData['lessons'] as $lessonData) {
+                    Lesson::updateOrCreate(['id' => $lessonData['id']], [
+                        'chapter_id' => $chapter->id,
+                        'title' => $lessonData['title'],
+                        'time' => $lessonData['time'],
+                        'visibility' => $lessonData['visibility'],
+                        'video_id' => $lessonData['video_id'],
+                    ]);
+
+                    $video = Video::findOrFail($lessonData['video_id']);
+                    $video->update([
+                        'status' => 'use',
+                        'videoable_id' => $lessonData['id'],
+                        'videoable_type' => Lesson::class,
+                    ]);
+                }
+            }
+        } else if ($step == 3) {
+            $request->validate([
+                'category_id' => 'required|exists:categories,id',
+                'price' => 'required|integer'
+            ]);
+
+            $course->update([
+                'category_id' => $request->category_id,
+                'price' => $request->price,
+                'status' => 'in_progress'
+            ]);
+        }
+
+        $course_step = $course->step;
+        if ($step >= $course_step && $step != 4) {
+            $course->update(['step' => $step + 1]);
+        }
+
+        return response()->json(['message' => 'course successfully updated', 'data' => $course]);
+    }
     public function show($course_id)
     {
         $course = Course::with([
@@ -94,8 +115,20 @@ class CourseController extends Controller
             'image.media',
             'video.media'
         ])->findOrFail($course_id);
+        $user = auth()->user();
+        $user_buy_course = false;
+        if ($user) {
+            $user_buy_course = $user->orders()->where('status', 'paid')->whereHas('courses', function ($query) use ($course) {
+                $query->where('course_id', $course->id);
+            })->exists();
+        }
+        $course->forceFill(['view_count' => $course->view_count + 1])->save();
         $mentor = User::findOrFail($course->user_id);
-        $category=Category::findOrFail($course->category_id);
+        if($course->category_id){
+        $category=Category::findOrFail($course->category_id);}
+        else{
+            $category=null;
+        }
         $averageRate = $course->comments->avg('rate');
         $countComments = $course->comments->count();
         $comments = Comment::where('course_id', $course_id)->orderBy('updated_at', 'desc')->paginate(20);
@@ -105,6 +138,7 @@ class CourseController extends Controller
                 $lessonCount += $chapterData->lessons->count();
             }
             $data = [
+                'user_buy_course'=>$user_buy_course,
                 'course'=>$course,
                 'category' =>$category,
                 'mentor' => $mentor,
@@ -113,6 +147,7 @@ class CourseController extends Controller
                 'averageRate' => $averageRate,
                 'countComments'=>$countComments,
                 'comments'=>$comments,
+
             ];
             return response()->json(['data' => $data]);
     }
@@ -122,5 +157,23 @@ class CourseController extends Controller
             'status' => $request->status
         ]);
         return response()->json(['message' => 'course status changed successfully']);
+    }
+    public function Indexlatest()
+    {
+        $courses = Course::with([
+            'chapters.lessons.video.media',
+            'image.media',
+            'video.media'
+        ])->orderBy('created_at', 'desc')->paginate(20);
+        return response()->json(['data' => $courses]);
+    }
+    public function IndexPopularFree()
+    {
+        $courses = Course::with([
+            'chapters.lessons.video.media',
+            'image.media',
+            'video.media'
+        ])->where('price',0)->orderBy('view_count', 'desc')->paginate(20);
+        return response()->json(['data' => $courses]);
     }
 }

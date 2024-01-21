@@ -23,6 +23,7 @@ class Course extends Model
         'price',
         'status',
         'step',
+        'view_count',
     ];
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

@@ -14,6 +14,7 @@ class CategoryController extends Controller
         $categoriesWithCourseCount = Category::getAllCategoriesWithCourseCount();
         foreach ($categoriesWithCourseCount as $categoryItem) {
             $category = [
+                "category_id" => $categoryItem->id,
                 "category" => $categoryItem->name,
                 "course_count" => $categoryItem->courses_count
             ];

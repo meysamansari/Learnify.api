@@ -22,6 +22,7 @@ return new class extends Migration
             $table->bigInteger('price')->nullable();
             $table->string('status')->nullable();
             $table->integer('step')->nullable();
+            $table->integer('view_count')->nullable();
             $table->timestamps();
         });
     }

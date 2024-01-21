@@ -81,12 +81,16 @@ Route::group(['prefix' => 'blogs','middleware'=>'auth:sanctum'], function (){
 
 Route::group(['prefix' => 'course', 'middleware' => 'auth:sanctum'], function () {
     Route::post('/create', [CourseController::class, 'create']);
-    Route::get('/show/{course_id}', [CourseController::class, 'show']);
+
     Route::put('/status/{course_id}', [CourseController::class, 'courseStatus']);
     Route::put('/update/{course_id}/{step?}', [CourseController::class, 'update'])->whereIn('step',[0,1,2,3,4]);
+    Route::delete('/delete/{course_id}', [CourseController::class, 'destroy']);
+    Route::get('/index', [CourseController::class, 'index']);
+    Route::get('/latest', [CourseController::class, 'IndexLatest']);
+    Route::get('/popular/free', [CourseController::class, 'IndexPopularFree']);
 });
 
-
+  Route::get('course/show/{course_id}', [CourseController::class, 'show']);
 
 // Comment
 
@@ -155,5 +159,5 @@ Route::group(['prefix' => 'transaction'], function () {
 
 
 Route::group(['prefix' => 'filter'], function () {
-    Route::post('/course}', [FilterController::class, 'filterAndSortCourses']);
+    Route::post('/course', [FilterController::class, 'filterAndSortCourses']);
 });
