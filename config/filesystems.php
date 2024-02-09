@@ -61,6 +61,12 @@ return [
             'root'   => storage_path('app/media'), // Change to storage path
             'url'    => env('APP_URL').'/storage/media', // Change the URL accordingly
         ],
+    
+         'media-library' => [
+            'driver' => 'local',
+            'root'   => storage_path('app/public'), // Change to storage path
+            'url'    => env('APP_URL').'/storage/public', // Change the URL accordingly
+        ],
 
     ],
 
