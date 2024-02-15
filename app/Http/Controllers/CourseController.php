@@ -176,4 +176,38 @@ class CourseController extends Controller
         ])->where('price',0)->orderBy('view_count', 'desc')->paginate(20);
         return response()->json(['data' => $courses]);
     }
+    public function IndexMentorCourses(Request $request)
+    {
+        $user = Auth::user();
+        $coursesQuery = $user->courses()->with([
+            'chapters.lessons.video.media',
+            'image.media',
+            'video.media'
+        ]);
+
+        if ($request->has('date_range')) {
+            $dateRange = $request->input('date_range');
+            $coursesQuery->whereBetween('created_at', $dateRange);
+        }
+
+        $courses = $coursesQuery->get();
+
+        foreach ($courses as $course) {
+            $course->total_sales = $course->orders()->where('status', 'paid')->count();
+            $course->total_students = $course->orders()->where('status', 'paid')->distinct('user_id')->count('user_id');
+
+            if (!$course->image) {
+                $course->image = 'default_image_path';
+            }
+            if (!$course->video) {
+                $course->video = 'default_video_path';
+            }
+
+            if ($course->price == 0) {
+                $course->total_sales = 0;
+            }
+        }
+
+        return response()->json(['data' => $courses]);
+    }
 }
